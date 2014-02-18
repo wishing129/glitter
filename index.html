@@ -1,0 +1,57 @@
+<html>
+<head>
+<script src='/socket.io/socket.io.js' type='text/javascript'></script>
+<script src='http://code.jquery.com/jquery-1.8.0.min.js' type='text/javascript'></script>
+<script src='/cmd.js' type='text/javascript'></script>
+</head>
+
+<body>
+    <h2>Glitter</h2>
+
+    <div style='height:300px;width:500px;border:solid 1px #000000;' id='message'></div>
+
+    <input id='cmd_input' onkeydown="goCmd();" />
+
+</body>
+<script type='text/javascript'>
+
+function processUserInput(cmdApp) {
+    var cmd_str = $('#cmd_input').val();
+    cmdApp.sendCmd(cmd_str, cur_dir);
+    $('#message').append(cmd_str+'<br>');
+    $('#cmd_input').val('');
+}
+var socket = io.connect();
+var cmdApp;
+var cur_dir = '/';
+
+$(document).ready(function() {
+    $('#message').html(cur_dir+": ");
+
+    cmdApp = new Cmd(socket);
+    socket.on('execResult', function(result) {
+            var message = result.message;
+            cur_dir = result.cur_dir;
+
+            if(result.type=='data') {
+                $('#message').append(message+'<br>');
+            }
+            else if(result.type=='end') {
+                $('#message').append(cur_dir + ': ');
+            }
+            else {
+                $('#message').append('[ERROR]<br>'+cur_dir+": ");
+            }
+        });
+});
+
+function goCmd() {
+    if(event.keyCode==13) {
+        processUserInput(cmdApp);
+        return false;
+    }
+}
+
+</script>
+
+</html>

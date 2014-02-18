@@ -1,0 +1,10 @@
+{
+    "name": "glitter",
+    "version": "0.0.1",
+    "description": "A tool helps to access terminal from your browser.",
+
+    "dependencies": {
+        "socket.io": "~0.9.6",
+        "mime": "~1.2.7"
+    }
+}
